@@ -10,6 +10,7 @@ Welcome to **SMM** — the **Secret Manager Maker CLI** that transforms your sca
 - **Automated Command Generation**: Generate the exact commands needed for pushing secrets to AWS, no more manual typing!
 - **Cross-Platform**: Works seamlessly on **macOS** and **Linux**.
 - **User-Friendly**: Easy-to-read error messages and warnings help you manage your secrets with confidence.
+- **Multi-line Value Support**: Supports multi-line secrets, making it easy to work with complex configuration values.
 
 ## 🛠 Installation
 
@@ -45,7 +46,7 @@ sudo mv smm /usr/local/bin/
    ```yaml
    # smm.yaml - Configuration for the Secret Manager Maker CLI
 
-   configFile: "secrets.conf"  # The path to your application config file
+   configFile: "appglobal.conf"  # The path to your application config file
    outputScript: "create_secrets.sh"  # The output file where the AWS CLI/Teleport commands will be written
 
    environments:
@@ -56,7 +57,7 @@ sudo mv smm /usr/local/bin/
      - name: project_name-prod  # Production environment
        region: us-east-1
 
-   format: tsh  # Options: "tsh" (Teleport) or "aws" (AWS CLI)
+   format: "tsh"  # Options: "tsh" (Teleport) or "aws" (AWS CLI)
    ```
 
 2. **Run the Script**: Run the script and provide options as necessary. For example, to process lines 5 to 10 from the config file:
@@ -75,15 +76,19 @@ sudo mv smm /usr/local/bin/
 
 ### 💥 Example Output (AWS CLI Format):
 
-```
-aws secretsmanager create-secret --name dev/k8s/DATABASE_URL --description "Auto-created secret via smm" --secret-string "jdbc://dev-db" --region us-west-2
+```bash
+aws secretsmanager create-secret --name project_name-dev/k8s/DATABASE_URL --description "Auto-created secret via smm" --secret-string "jdbc://dev-db" --region us-west-2
 ```
 
 ### 💥 Example Output (Teleport Format):
 
+```bash
+tsh aws secretsmanager create-secret --name 'project_name-dev/k8s/DATABASE_URL' --secret-string "jdbc://dev-db" --region us-west-2
 ```
-tsh aws secretsmanager create-secret --name 'dev/k8s/DATABASE_URL' --secret-string "jdbc://dev-db" --region us-west-2
-```
+
+### ⚙️ Multi-Line Secret Support
+
+With the latest update, `smm` now supports multi-line values. If a secret spans multiple lines, it will be properly handled and included in the generated AWS Secrets Manager commands.
 
 ## 🌍 Cross-Platform Support
 
