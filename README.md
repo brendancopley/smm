@@ -1,54 +1,137 @@
-# 🧙‍♂️ SMM - Secret Manager Maker CLI
+# 🔐 Secret Manager Maker (smm) CLI
 
-Welcome to **SMM** — the **Secret Manager Maker CLI** that transforms your scattered environment configs, YAMLs, and JSONs into polished AWS Secrets Manager commands. Whether you use **AWS CLI** or **Teleport (tsh)**, `smm` handles the heavy lifting, so you can focus on the fun stuff. 🎩✨
+The **smm** CLI 🛠️ tool helps you automate 🤖 the process of converting 🔄 environment 🌍 configuration files 📂 into AWS Secrets Manager 🔑 commands. Whether you are working with development 🛠️, test 🧪, or production 🏭 environments, this tool allows you to push secrets 🤫 directly to AWS Secrets Manager with ease. You can also choose between AWS CLI and Teleport (tsh) 🚀 command formats.
 
-## 🚀 Features
+## 🌟 Features
 
-- **Multi-format Support**: Converts environment variables, YAML, JSON files, or any other config format into AWS Secrets Manager commands.
-- **Flexible Formatting**: Choose between **AWS CLI** or **Teleport (tsh)** formats with a single configuration setting.
-- **Environment-Aware**: Process secrets for different environments (dev, staging, prod) and AWS regions effortlessly.
-- **Automated Command Generation**: Generate the exact commands needed for pushing secrets to AWS, no more manual typing!
-- **Cross-Platform**: Works seamlessly on **macOS** and **Linux**.
-- **User-Friendly**: Easy-to-read error messages and warnings help you manage your secrets with confidence.
-- **Multi-line Value Support**: Supports multi-line secrets, making it easy to work with complex configuration values.
+- 📖 Automatically reads your environment configuration from YAML 📄 or custom config files.
+- 🔄 Converts the configuration into AWS Secrets Manager or Teleport secrets creation commands.
+- 🌍 Supports multiple environments like development 🛠️, testing 🧪, and production 🏭.
+- 🎯 Allows users to specify line ranges, custom key names 🔑, and output scripts 📜.
+- 🐛 Debug mode for troubleshooting.
 
-## 🛠 Installation
+## ⚙️ Installation
 
-Get started with `smm` by cloning the repository and making the script executable:
+1. 🌀 **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/smm-cli.git
+   cd smm-cli
+   ```
 
-```bash
-# Clone the repository
-git clone https://github.com/brendancopley/smm-cli.git
-cd smm-cli
+2. 🔧 **Make the script executable**:
+   ```bash
+   chmod +x smm
+   ```
 
-# Make the script executable
-chmod +x smm
+3. ▶️ **Run the CLI**:
+   ```bash
+   ./smm --help
+   ```
 
-# Optionally, move it to a location in your PATH for easier access
-sudo mv smm /usr/local/bin/
-```
-
-## 📖 Usage
-
-### Basic Command Structure
+## 🚀 Usage
 
 ```bash
-./smm.sh [-D] [--lines <line-range>]
+./smm [OPTIONS]
 ```
 
-- `-D`: Enable debug mode to see detailed output for each step.
-- `--lines <line-range>`: Specify a line or range of lines from the config file that you want to process (e.g., `5-10`).
+### ⚙️ Options
 
-### Example Usage
+| ⚙️ Option           | 📋 Description                                                              |
+| ------------------- | -------------------------------------------------------------------------- |
+| `-h`, `--help`      | 📖 Show help message and exit.                                              |
+| `-D`                | 🐞 Enable debug mode for verbose logging.                                   |
+| `--lines RANGE`     | 🔢 Specify a range of line numbers to read from the config file (e.g., 5-10).|
+| `--keyname NAME`    | 🔑 Use a custom keyName for the secrets instead of using the config.        |
+| `--config FILE`     | 📂 Specify a custom configuration file. Default is `smm.yaml`.              |
+| `--output FILE`     | 💾 Specify the output script file. Default is `create_secrets.sh`.          |
 
-1. **Create `smm.yaml`**: If `smm.yaml` does not exist, the script will automatically create one with default values. Modify it as needed for your environment.
+### ✨ Example Command
+1. **Generate AWS CLI commands with default config**:
+   By default, the tool reads from `smm.yaml` and generates the secrets creation commands in the default output file (`create_secrets.sh`).
+   ```bash
+   ./smm
+   ```
 
+2. **Enable debug mode to track execution**:
+   ```bash
+   ./smm -D
+   ```
+
+   The debug mode will display details about the configuration file being used, the output script being generated, and the values extracted from the YAML.
+
+3. **Specify a custom configuration file**:
+   Instead of the default `smm.yaml`, you can specify a custom configuration file.
+   ```bash
+   ./smm --config custom_config.yaml
+   ```
+
+4. **Generate Teleport (tsh) commands**:
+   By changing the `format` in your `smm.yaml` to `tsh`, you can create Teleport CLI commands:
    ```yaml
-   # smm.yaml - Configuration for the Secret Manager Maker CLI
+   format: tsh  # in smm.yaml
+   ```
+   Then run:
+   ```bash
+   ./smm
+   ```
 
-   configFile: "appglobal.conf"  # The path to your application config file
-   outputScript: "create_secrets.sh"  # The output file where the AWS CLI/Teleport commands will be written
+5. **Custom output file**:
+   Specify a custom output file for the generated script:
+   ```bash
+   ./smm --output my_secrets_script.sh
+   ```
 
+### Combining Multiple Options
+
+1. **Custom keyName with line range**:
+   If you want to specify a custom key name while processing only a specific range of lines from the config file:
+   ```bash
+   ./smm --keyname MY_SECRET_KEY --lines 5-10
+   ```
+
+   In this example, `MY_SECRET_KEY` will be used for each secret, and only lines 5 to 10 of the config file will be read.
+
+2. **Debug mode with custom keyName and custom output**:
+   Combine debug mode to get detailed output, specify a custom key name, and save the generated commands to a custom file:
+   ```bash
+   ./smm -D --keyname MY_CUSTOM_KEY --output secrets_script.sh
+   ```
+
+   This is useful when you need to debug the script and ensure the correct key name and output file are being used.
+
+3. **Custom config file, custom output, and range of lines**:
+   Use a specific configuration file, output to a custom script, and process only specific lines:
+   ```bash
+   ./smm --config custom_config.yaml --output custom_secrets.sh --lines 10-20
+   ```
+
+   This reads the configuration from `custom_config.yaml`, writes the generated commands to `custom_secrets.sh`, and only processes lines 10 to 20 in the configuration file.
+
+4. **Mix of AWS CLI format and a specific range of lines**:
+   You can specify that you only want the secrets to be created for a subset of your configuration file, using AWS CLI format:
+   ```yaml
+   format: aws  # in smm.yaml
+   ```
+   Then run:
+   ```bash
+   ./smm --lines 10-30
+   ```
+
+   This will generate AWS CLI commands for secrets defined between lines 10 and 30 of the configuration.
+
+5. **Create secrets for production environment only**:
+   Suppose you only want to process lines containing production-related secrets and use a custom key:
+   ```bash
+   ./smm --keyname PROD_SECRET_KEY --lines 50-70 --output prod_secrets.sh
+   ```
+
+   This reads the configuration file, extracts secrets from lines 50 to 70, uses the `PROD_SECRET_KEY` key name, and generates the output in `prod_secrets.sh`.
+
+### Advanced Scenarios
+
+1. **Multiple secrets creation with custom script for each environment**:
+   You can create separate scripts for each environment (dev, test, prod) by modifying the environments in your `smm.yaml` and specifying different output files:
+   ```yaml
    environments:
      - name: project_name-dev  # Development environment
        region: us-west-2
@@ -56,62 +139,136 @@ sudo mv smm /usr/local/bin/
        region: us-west-2
      - name: project_name-prod  # Production environment
        region: us-east-1
-
-   format: "tsh"  # Options: "tsh" (Teleport) or "aws" (AWS CLI)
    ```
 
-2. **Run the Script**: Run the script and provide options as necessary. For example, to process lines 5 to 10 from the config file:
-
+   Run for the development environment:
    ```bash
-   ./smm.sh --lines 5-10
+   ./smm --keyname DEV_SECRET_KEY --output dev_secrets.sh
    ```
 
-   If no line range is specified, the script will prompt you to enter a line or range of lines.
-
-3. **Batch Process Multiple Environments**:
-
+   Run for the production environment:
    ```bash
-   ./smm.sh --lines 5-10 --envs dev,test,prod
+   ./smm --keyname PROD_SECRET_KEY --output prod_secrets.sh
    ```
 
-### 💥 Example Output (AWS CLI Format):
+2. **Using different configurations for staging and production**:
+   You can maintain separate configuration files for different environments (e.g., `staging.yaml` and `production.yaml`) and specify them as needed:
+   ```bash
+   ./smm --config staging.yaml --output staging_secrets.sh
+   ./smm --config production.yaml --output production_secrets.sh
+   ```
 
-```bash
-aws secretsmanager create-secret --name project_name-dev/k8s/DATABASE_URL --description "Auto-created secret via smm" --secret-string "jdbc://dev-db" --region us-west-2
+### Custom Configuration Example
+
+Here's an example of what your custom configuration YAML might look like:
+
+```yaml
+# custom_config.yaml
+configFile: "prod/hub/config/appglobal.conf"  # Path to the production config file
+outputScript: "prod_secrets.sh"  # The output file where the AWS CLI/Teleport commands will be written
+
+environments:
+  - name: project_name-prod  # Production environment
+    region: us-east-1
+
+format: aws  # Options: "tsh" (Teleport) or "aws" (AWS CLI)
 ```
 
-### 💥 Example Output (Teleport Format):
-
+Then you can run:
 ```bash
-tsh aws secretsmanager create-secret --name 'project_name-dev/k8s/DATABASE_URL' --secret-string "jdbc://dev-db" --region us-west-2
+./smm --config custom_config.yaml --output custom_script.sh
 ```
 
-### ⚙️ Multi-Line Secret Support
+### Debugging
 
-With the latest update, `smm` now supports multi-line values. If a secret spans multiple lines, it will be properly handled and included in the generated AWS Secrets Manager commands.
+To enable detailed debug logging to trace the behavior of the script and see the values being processed, use the `-D` option:
+```bash
+./smm -D --config smm.yaml --output my_debug_script.sh
+```
+
+This provides detailed information about each step, such as:
+- Configuration values being extracted.
+- Output scripts being generated.
+- Secrets and key names being processed.
+
+---
+
+These additional examples demonstrate how you can combine different options in the `smm` CLI to fit various real-world use cases.
+
+## 📝 Configuration (`smm.yaml`)
+
+`smm` uses a YAML configuration file 📄 to define environment settings ⚙️. The default file is `smm.yaml` and looks like this:
+
+```yaml
+# smm.yaml - Configuration for the Secret Manager Maker CLI
+
+configFile: "secrets.conf"  # The path to your application config file
+outputScript: "create_secrets.sh"  # The output file where the AWS CLI/Teleport commands will be written
+
+environments:
+  - name: project_name-dev  # Development environment
+    region: us-west-2
+  - name: project_name-test  # Test environment
+    region: us-west-2
+  - name: project_name-prod  # Production environment
+    region: us-east-1
+
+format: tsh  # Options: "tsh" (Teleport) or "aws" (AWS CLI)
+```
+
+### 🔑 Key Components:
+
+- **configFile**: The path 🛤️ to the config file where your key-value pairs for secrets 🤫 are defined.
+- **outputScript**: The file where the generated AWS CLI/Teleport commands 🚀 will be saved 💾.
+- **environments**: Define your environment names 🛠️ (e.g., dev, test, prod) and their associated regions 🌍.
+- **format**: Choose between `tsh` for Teleport commands or `aws` for AWS Secrets Manager commands.
 
 ## 🌍 Cross-Platform Support
 
-Good news, adventurer! Whether you're on **macOS** or **Linux**, `smm` is there for you.
+`smm` is designed for Unix-based systems like macOS 🍏 and Linux 🐧. Simply run the script in your terminal 💻, and it will function as expected. Ensure you have access to AWS CLI and/or Teleport CLI based on your configuration needs.
 
-- **macOS**: Works flawlessly, just install it via the instructions above or with `brew` (coming soon!).
-- **Linux**: Supports all major distros like Debian, Ubuntu, CentOS, and Red Hat.
+## 📋 Example Output
 
-## 🛠 Contributing
+Here’s an example of what the generated script might look like when using AWS CLI:
+```bash
+#!/bin/bash
 
-We love contributors! 💖 Want to add a feature or fix a bug? Here's how you can help:
+aws secretsmanager create-secret --name project_name-dev/k8s/MY_CUSTOM_KEY --secret-string "secret_value" --region us-west-2
+aws secretsmanager create-secret --name project_name-test/k8s/MY_CUSTOM_KEY --secret-string "another_secret_value" --region us-west-2
+aws secretsmanager create-secret --name project_name-prod/k8s/MY_CUSTOM_KEY --secret-string "prod_secret_value" --region us-east-1
+```
 
-1. Fork the repo 🏴‍☠️
-2. Create a new branch (`git checkout -b my-new-feature`) 🌿
-3. Make your magical changes and commit (`git commit -am 'Added magic feature'`) 🧙‍♂️
-4. Push to the branch (`git push origin my-new-feature`) 🚀
-5. Open a Pull Request with a smile 😊
+## 🐞 Debugging
 
-## 📝 License
+Enable the debug mode 🐛 using the `-D` option to get detailed output of the script execution:
+```bash
+./smm -D --config myconfig.yaml
+```
 
-This project is licensed under the **MIT License**. Feel free to use and modify it, but make sure you give us some credit (and maybe buy us a coffee ☕)!
+## 🤝 Contributing
+
+1. 🍴 **Fork the repository**.
+2. 🌿 **Create your feature branch**: `git checkout -b feature/your-feature-name`.
+3. ✏️ **Commit your changes**: `git commit -m 'Add some feature'`.
+4. 🚀 **Push to the branch**: `git push origin feature/your-feature-name`.
+5. 📬 **Open a pull request**.
+
+## 📜 License
+
+This project is licensed under the MIT License 📄.
+
+## 🚀 Get Started
+
+Get started with `smm` by running:
+```bash
+./smm --help
+```
 
 ---
+
+This `README.md` provides all the necessary details on how to use the `smm` CLI tool, its options, and how to configure and run it effectively.
+
+
 
 🎩 **SMM your secrets into AWS!** Your configs deserve the best. 💼
 
