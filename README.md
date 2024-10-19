@@ -17,7 +17,7 @@ Get started with `smm` by cloning the repository and making the script executabl
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/smm-cli.git
+git clone https://github.com/brendancopley/smm-cli.git
 cd smm-cli
 
 # Make the script executable
@@ -45,18 +45,18 @@ sudo mv smm /usr/local/bin/
    ```yaml
    # smm.yaml - Configuration for the Secret Manager Maker CLI
 
-   configFile: "appglobal.conf"  # The path to your application config file
+   configFile: "secrets.conf"  # The path to your application config file
    outputScript: "create_secrets.sh"  # The output file where the AWS CLI/Teleport commands will be written
 
    environments:
-     - name: dev  # Development environment
+     - name: project_name-dev  # Development environment
        region: us-west-2
-     - name: test  # Test environment
+     - name: project_name-test  # Test environment
        region: us-west-2
-     - name: prod  # Production environment
+     - name: project_name-prod  # Production environment
        region: us-east-1
 
-   format: "tsh"  # Options: "tsh" (Teleport) or "aws" (AWS CLI)
+   format: tsh  # Options: "tsh" (Teleport) or "aws" (AWS CLI)
    ```
 
 2. **Run the Script**: Run the script and provide options as necessary. For example, to process lines 5 to 10 from the config file:
@@ -75,13 +75,13 @@ sudo mv smm /usr/local/bin/
 
 ### 💥 Example Output (AWS CLI Format):
 
-```bash
+```
 aws secretsmanager create-secret --name dev/k8s/DATABASE_URL --description "Auto-created secret via smm" --secret-string "jdbc://dev-db" --region us-west-2
 ```
 
 ### 💥 Example Output (Teleport Format):
 
-```bash
+```
 tsh aws secretsmanager create-secret --name 'dev/k8s/DATABASE_URL' --secret-string "jdbc://dev-db" --region us-west-2
 ```
 
