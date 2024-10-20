@@ -2,9 +2,7 @@
 
 `Secret Manager Maker (smm)`  CLI 🛠️ tool helps you automate 🤖 the process of converting 🔄 environment 🌍 configuration files 📂 into AWS Secrets Manager 🔑 commands. Whether you are working with development 🛠️, test 🧪, or production 🏭 environments, this tool allows you to push secrets 🤫 directly to AWS Secrets Manager with ease. You can also choose between AWS CLI and Teleport (tsh) 🚀 command formats.
 
-
-
-https://github.com/user-attachments/assets/c825d488-dddd-4dd2-80b8-f2d5bc91a3cd
+![Yxg7MDkPj4kmI](https://github.com/user-attachments/assets/a209be88-0e5f-4935-a097-fcfcb78e3f87)
 
 
 
